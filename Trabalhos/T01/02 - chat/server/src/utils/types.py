@@ -1,0 +1,4 @@
+MESSAGE = 1
+JOIN    = 2
+LOGOUT  = 3
+LIST    = 4

@@ -1,0 +1,4 @@
+message = {
+    "type": None,
+    "data": {}
+}
