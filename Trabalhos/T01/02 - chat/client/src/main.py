@@ -46,6 +46,8 @@ if __name__ == "__main__":
         print("Você precisa entrar no chat!")
         cmd = input(">> ")
     
+    SERVER_IP = input("Insira o IP do servidor >>")
+    SERVER_PORT = input("Insira a porta usada pelo servidor >>")
     nickname = input("Insira seu nick >> ")
     req = {
         "type": types.JOIN, 
@@ -54,34 +56,38 @@ if __name__ == "__main__":
             }
         }
 
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('127.0.0.1', 8001))
-    client.send(json.dumps(req).encode(encoding))
-
-    #confirmacao
-    message = client.recv(1024)
-    res = json.loads(message.decode(encoding))
-    print(F"{colors.OKGREEN}{res['data']['message']}{colors.ENDC}")
-
-    receive_thread = threading.Thread(target=receive, args=(client,))
-    receive_thread.start()
-
-    sleep(.1)
-    flag = True
-    while flag:
-        cmd = input('>>')
-        print ("\033[A                             \033[A")   # ansi escape arrow up then overwrite the line 
-        req = { "data": {'nickname': nickname} }
-        
-        if cmd == "/SAIR":
-            req["type"] = types.LOGOUT
-            flag = False
-
-        elif cmd == "/USUARIOS":
-            req["type"] = types.LIST
-
-        else:
-            req["type"] = types.MESSAGE
-            req["data"]["message"] = cmd
-
+    try:
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect((SERVER_IP, int(SERVER_PORT)))
         client.send(json.dumps(req).encode(encoding))
+
+        #confirmacao
+        message = client.recv(1024)
+        res = json.loads(message.decode(encoding))
+        print(F"{colors.OKGREEN}{res['data']['message']}{colors.ENDC}")
+
+        receive_thread = threading.Thread(target=receive, args=(client,))
+        receive_thread.start()
+
+        sleep(.1)
+        flag = True
+        while flag:
+            cmd = input('>>')
+            print ("\033[A                             \033[A")   # ansi escape arrow up then overwrite the line 
+            req = { "data": {'nickname': nickname} }
+            
+            if cmd == "/SAIR":
+                req["type"] = types.LOGOUT
+                flag = False
+
+            elif cmd == "/USUARIOS":
+                req["type"] = types.LIST
+
+            else:
+                req["type"] = types.MESSAGE
+                req["data"]["message"] = cmd
+
+            client.send(json.dumps(req).encode(encoding))
+            
+    except:
+        print(f"Não foi possível conectar-se a {SERVER_IP}:{SERVER_PORT} ")
