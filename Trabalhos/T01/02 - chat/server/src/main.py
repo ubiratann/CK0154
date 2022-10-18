@@ -71,14 +71,15 @@ def handle(client, nickname):
 def receive(server):
     while True:
         client, address = server.accept()
-        print(f"Conectado com {str(address)}")
 
         req = json.loads(client.recv(1024))
-        nicknames.append(req["data"]["nickname"])
+        nickname = req["data"]["nickname"]
+        nicknames.append(nickname)
+
+        print(f"{colors.BOLD}{nickname}{colors.BOLD} conectou-se via {str(address)}")
         clients.append(client)
 
-        msg = f"{colors.BOLD}{req['data']['nickname']}{colors.BOLD} {colors.OKBLUE}entrou no chat!{colors.ENDC}"
-        print(msg)
+        msg = f"{colors.BOLD}{nickname}{colors.BOLD} {colors.OKBLUE}entrou no chat!{colors.ENDC}"
         broadcast(msg)
 
         thread = threading.Thread(target=handle, args=(client,req["data"]["nickname"]))
@@ -95,6 +96,7 @@ if __name__ == "__main__":
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
+    print(f"Servidor iniciado em {host}:{port}")
     server.listen()
 
     signal.signal(signal.SIGINT, signal_handler) 
