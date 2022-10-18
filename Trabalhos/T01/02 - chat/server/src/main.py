@@ -41,11 +41,6 @@ def send_to_client(client, message="", type=types.MESSAGE):
     
     client.send(json.dumps(res).encode(encoding))
 
-def send_nicks_to_client(client):
-    client.send("Lista de usuarios".encode(encoding))
-    for nick in nicknames:
-        client.send(f"\t {nick}".encode(encoding))
-
 def handle(client, nickname):
     while True:
         try:
