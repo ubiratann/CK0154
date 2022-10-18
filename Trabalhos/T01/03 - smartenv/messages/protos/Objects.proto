@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+message ObjectsList {
+  repeated Object objects = 1;
+}
+
+message Object{
+  bool status = 1;
+  string ip = 2;
+  int32 port = 3;
+  string id = 4;
+
+  oneof object {
+    Light light = 5;
+    Tv tv = 6;
+    TemperatureSensor temperaturesensor = 7;
+  }
+}
+
+message Light {
+  string name = 1;
+  string color = 2;
+}
+
+message Tv {
+  string channel = 1;
+  int32 volume = 2;
+}
+
+message TemperatureSensor {
+  int32 temperature = 1;
+}
