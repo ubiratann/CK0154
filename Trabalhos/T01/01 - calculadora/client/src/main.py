@@ -66,7 +66,6 @@ if __name__ == "__main__":
             if(response["status"] != HTTPStatus.OK):
                 raise Exception(response["message"])
 
-            print(response) 
             print(f"{request['body']['n1']} {request['body']['operator']} {request['body']['n2']} = {response['body']['result']}")
 
             choice = input("Deseja inserir outra expressão ?(s/n)") 
