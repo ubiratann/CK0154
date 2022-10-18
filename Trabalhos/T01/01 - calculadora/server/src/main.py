@@ -37,7 +37,7 @@ if __name__ == "__main__":
             
             response["status"] = HTTPStatus.OK
             response["body"]["result"] = result
-
+            print(response)
             sock.sendto(bytes(json.dumps(response), ENCODING), client)
     
         except cexprtk.ParseException as err:
