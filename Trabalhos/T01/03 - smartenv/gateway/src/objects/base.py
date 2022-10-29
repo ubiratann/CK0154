@@ -25,3 +25,5 @@ class BaseObject:
         res = GatewayResponse()
         res.ParseFromString(self.group_socket.recv(BUFFER_SIZE))
 
+        
+
