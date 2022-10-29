@@ -1,8 +1,8 @@
 import socket
 import struct
 
-OBJECTS_GROUP_ADDRESS = '127.0.0.1'
-GATEWAY_GROUP_ADDRESS = '127.0.0.2'
+OBJECTS_GROUP_ADDRESS = '230.0.0.1'
+GATEWAY_GROUP_ADDRESS = '230.0.0.2'
 MULTICAST_PORT = 4000
 BUFFER_SIZE = 65536
 
@@ -13,9 +13,7 @@ def get_gateway_group_socket():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     sock.bind((GATEWAY_GROUP_ADDRESS, MULTICAST_PORT))
-
     mreq = struct.pack("4sl", socket.inet_aton(GATEWAY_GROUP_ADDRESS), socket.INADDR_ANY)
-
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     return sock
 

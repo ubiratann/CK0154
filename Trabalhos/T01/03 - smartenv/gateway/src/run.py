@@ -1,14 +1,13 @@
 import socket
 import platform
 import os
+import utils.discovery as discovery 
 
 from flask import Flask
-from flask_cors import CORS, cross_origin
 from threading import Thread
 
-from src.routes.objects import blueprint as objects
-import src.utils.discovery as discovery 
-from src.proto.GatewayDiscovery_pb2 import Request as RequestGateway, Response as ResponseGateway
+import routes.objects as objects
+from proto.GatewayDiscovery_pb2 import Request as RequestGateway, Response as ResponseGateway
 
 BUFFER_SIZE=5000
 

@@ -2,7 +2,8 @@ import uuid
 import socket
 
 from threading import Thread
-from src.utils.discovery import get_gateway_group_socket,  get_objects_group_socket, get_udp_socket, send_to_gateway_group
+from src.utils.discovery import get_objects_group_socket, get_udp_socket, gateway_broadcast, objects_broadcast
+from src.proto.GatewayDiscovery_pb2 import Request as GatewayRequest, Response as GatewayResponse
 
 REFRESH_INTERVAL = 10
 BUFFER_SIZE = 5000
@@ -17,3 +18,10 @@ class BaseObject:
         self.ip, self.port = self.command_socket.getsockname()
         self.id = str(uuid.uuid4())
         self.status = True
+
+        req = GatewayRequest()
+        gateway_broadcast(self.udp_socket, req.SerializeToString())
+
+        res = GatewayResponse()
+        res.ParseFromString(self.group_socket.recv(BUFFER_SIZE))
+

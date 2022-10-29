@@ -5,12 +5,11 @@ from http import HTTPStatus
 from flask import Blueprint, Response, request
 from flask_cors import CORS
 
-
 blueprint = Blueprint("object", __name__)
 
 CORS(blueprint)
 
-@blueprint.get("/")
+@blueprint.get("/") 
 def get():
     ...
 
