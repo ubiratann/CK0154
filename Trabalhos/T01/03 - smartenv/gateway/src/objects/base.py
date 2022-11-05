@@ -43,21 +43,23 @@ class BaseObject:
     def proto(self):
         return Object()
 
-    def update(self, object_details):
+    def update(self, object):
         ...
 
     def handle(self, client_socket):
-        object_details = Object()
-        object_details.ParseFromString(client_socket.recv(BUFFER_SIZE))
+        object = Object()
+        object.ParseFromString(client_socket.recv(BUFFER_SIZE))
         client_socket.close()
 
-        self.update_internal_state(object_details)
+        self.update(object)
 
     def upload(self):
         while True:
+            time.sleep(REFRESH_INTERVAL)
+            
             requests.put(f"{self.gateway.api_url}/refresh/{self.id}",
                             data=self.to_proto().SerializeToString())
-            time.sleep(REFRESH_INTERVAL)
+                            
 
     def register(self):
         requests.post(f"{self.gateway.api_url}/", 
