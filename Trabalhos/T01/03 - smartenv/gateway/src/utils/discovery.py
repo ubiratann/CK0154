@@ -1,8 +1,8 @@
 import socket
 import struct
 
-OBJECTS_GROUP_ADDRESS = '127.0.0.1'
-GATEWAY_GROUP_ADDRESS = '127.0.0.2'
+OBJECTS_GROUP_ADDRESS = '224.1.1.1'
+GATEWAY_GROUP_ADDRESS = '224.1.1.2'
 MULTICAST_PORT = 4000
 BUFFER_SIZE = 65536
 
@@ -35,8 +35,8 @@ def get_udp_socket():
     udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     return udp_socket
 
-def send_to_gateway_group(sock, message):
+def gateway_broadcast(sock, message):
     sock.sendto(message, (GATEWAY_GROUP_ADDRESS, MULTICAST_PORT))
 
-def send_to_objects_group(sock, message):
+def objects_broadcast(sock, message):
     sock.sendto(message, (OBJECTS_GROUP_ADDRESS, MULTICAST_PORT))
