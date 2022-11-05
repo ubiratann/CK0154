@@ -6,18 +6,22 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 from threading import Thread
 
-from src.routes.objects import blueprint as objects
-import src.utils.discovery as discovery 
-from src.proto.GatewayDiscovery_pb2 import Request as RequestGateway, Response as ResponseGateway
+import routes.objects as objects
+import utils.discovery as discovery 
+
+from proto.GatewayDiscovery_pb2 import Request, Response
 
 BUFFER_SIZE=5000
 
-def handler(group_socket, udp_socket):
+def listener(udp_socket, group_socket, host, port):
     while True:
         try:
-            req = RequestGateway()
+            req = Request()
             req.ParseFromString(group_socket.recv(BUFFER_SIZE))
-
+            
+            location = Response(ip=host, port=port)
+            discovery.objects_broadcast(udp_socket, location.SerializeToString())
+            
             discovery.send_to_objects_group()
 
         except Exception as err:
@@ -38,5 +42,10 @@ if __name__ == "__main__":
     gateway_group = discovery.get_gateway_group_socket()
 
     app.register_blueprint(objects.blueprint, url_prefix=f"/api/v1/object")
+
+    location = Response(ip="localhost", port=5000)
+    discovery.objects_broadcast(socket, location.SerializeToString())
+    
+    Thread(target=listener, args=(socket, gateway_group, HOST, PORT)).start()
 
     app.run(HOST, PORT)
