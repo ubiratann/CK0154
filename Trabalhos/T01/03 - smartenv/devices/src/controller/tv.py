@@ -1,11 +1,13 @@
 from controller.base import BaseDevice
-from proto.Devices_pb2 import Tv as TVProto, Device
+from proto.Devices_pb2 import Tv as TVProto, Device, ACTUATOR
 
 class Tv(BaseDevice):
 
     def __init__(self, channel, volume):
+        self.type    = ACTUATOR
+        self.volume  = volume
         self.channel = channel
-        self.volume = volume
+
         super().__init__()
 
     def proto(self):

@@ -1,10 +1,11 @@
 from proto.Devices_pb2 import Freezer as FreezerProto, FreezerPower, Device
-from controller.base import BaseDevice
+from controller.base import BaseDevice, SENSOR
 
 class Freezer(BaseDevice):
 
     def __init__(self, temperature, power):
         self.power       = power
+        self.type        = SENSOR
         self.temperature = temperature
         super().__init__()
 

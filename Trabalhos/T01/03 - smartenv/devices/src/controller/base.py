@@ -8,9 +8,9 @@ from threading import Thread
 from src.utils import discovery
 from src.model.gateway import Gateway
 from src.proto.GatewayDiscovery_pb2 import Request, Response
-from src.proto.Devices_pb2 import Device
+from src.proto.Devices_pb2 import Device, SENSOR, ACTUATOR
 
-REFRESH_INTERVAL = 10
+REFRESH_INTERVAL = 1
 BUFFER_SIZE = 5000
 logging.basicConfig(level=logging.INFO)
 
@@ -38,7 +38,8 @@ class BaseDevice:
         logging.info(f"Server addres: {res.ip}:{res.port}")
 
         self.register()
-        Thread(target=self.refresh).start()
+        if self.type == SENSOR:
+            Thread(target=self.refresh).start()
 
         self.command_socket.listen(100)
         while True:
@@ -63,7 +64,7 @@ class BaseDevice:
         while True:
             time.sleep(REFRESH_INTERVAL)
             
-            requests.put(f"{self.gateway.api_url}/refresh/{self.id}",
+            requests.patch(f"{self.gateway.api_url}/{self.id}",
                             data=self.proto().SerializeToString())
 
     def register(self):

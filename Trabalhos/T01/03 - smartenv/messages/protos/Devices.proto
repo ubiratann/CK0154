@@ -5,16 +5,17 @@ message DeviceList {
 }
 
 message Device{
-  bool status = 1;
-  string ip   = 2;
-  int32 port  = 3;
-  int32 id   = 4;
+  bool status     = 1;
+  string ip       = 2;
+  int32 port      = 3;
+  int32 id        = 4;
+  DeviceType type = 5;
 
   oneof device {
-    Light light = 5;
-    Tv tv = 6;
-    TemperatureSensor temperaturesensor = 7;
-    Freezer freezer = 8;
+    Light light = 6;
+    Tv tv = 7;
+    TemperatureSensor temperaturesensor = 8;
+    Freezer freezer = 9;
   }
 }
 
@@ -41,4 +42,9 @@ enum FreezerPower {
   LOW    = 0;
   MEDIUM = 1;
   HIGH   = 2;
+}
+
+enum DeviceType{
+  SENSOR   = 0;
+  ACTUATOR = 1;
 }

@@ -1,14 +1,16 @@
 import logging
 
 from src.controller.base import BaseDevice
-from src.proto.Devices_pb2 import Light as LightProto, Device
+from src.proto.Devices_pb2 import Light as LightProto, Device, ACTUATOR
 
 
 class Light(BaseDevice):
 
     def __init__(self, name, color):
-        self.name = name
+        self.name  = name
+        self.type  = ACTUATOR
         self.color = color
+
         super().__init__()
 
     def proto(self):
