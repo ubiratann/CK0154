@@ -1,7 +1,7 @@
-from proto.Objects_pb2 import Freezer as FreezerProto, FreezerPower, Object
-from controller.base import BaseObject
+from proto.Devices_pb2 import Freezer as FreezerProto, FreezerPower, Device
+from controller.base import BaseDevice
 
-class Freezer(BaseObject):
+class Freezer(BaseDevice):
 
     def __init__(self, temperature, power):
         self.power       = power
@@ -12,13 +12,13 @@ class Freezer(BaseObject):
         freezer = FreezerProto(temperature=self.temperature, 
                                power=self.power)
         
-        return Object(status=self.status, 
+        return Device(status=self.status, 
                       ip=self.ip, 
                       port=self.port,
                       freezer=freezer,
                       id=self.id)
 
-    def update(self, object):
-        self.status      = object.status
-        self.power       = object.freezer.power
-        self.temperature = object.freezer.temperature
+    def update(self, device):
+        self.status      = device.status
+        self.power       = device.freezer.power
+        self.temperature = device.freezer.temperature

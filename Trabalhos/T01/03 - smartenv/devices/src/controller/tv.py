@@ -1,7 +1,7 @@
-from controller.base import BaseObject
-from proto.Objects_pb2 import Tv as TVProto, Object
+from controller.base import BaseDevice
+from proto.Devices_pb2 import Tv as TVProto, Device
 
-class Tv(BaseObject):
+class Tv(BaseDevice):
 
     def __init__(self, channel, volume):
         self.channel = channel
@@ -10,15 +10,15 @@ class Tv(BaseObject):
 
     def proto(self):
         tv = TVProto(channel=self.channel, volume=self.volume)
-        return Object(status=self.status, 
+        return Device(status=self.status, 
                       ip=self.ip, 
                       port=self.port, 
                       tv=tv,
                       id=self.id)
 
-    def update(self, object):
-        self.status = object.status
-        self.channel = object.tv.channel
-        self.volume = object.tv.volume
+    def update(self, device):
+        self.status = device.status
+        self.channel = device.tv.channel
+        self.volume = device.tv.volume
 
 Tv("10.1", 20)

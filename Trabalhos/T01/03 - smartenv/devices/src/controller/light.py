@@ -1,10 +1,10 @@
 import logging
 
-from src.controller.base import BaseObject
-from src.proto.Objects_pb2 import Light as LightProto, Object
+from src.controller.base import BaseDevice
+from src.proto.Devices_pb2 import Light as LightProto, Device
 
 
-class Light(BaseObject):
+class Light(BaseDevice):
 
     def __init__(self, name, color):
         self.name = name
@@ -14,15 +14,15 @@ class Light(BaseObject):
     def proto(self):
         light = LightProto(name=self.name, 
                            color=self.color)
-        logging.info(f"{self.status}, {light}")
-        return Object(status=self.status, 
+                           
+        return Device(status=self.status, 
                       ip=self.ip, 
                       port=self.port,
                       light=light,
                       id=self.id)
 
-    def update(self, object):
-        self.status = object.status
-        self.name   = object.light.name
-        self.color  = object.light.color
+    def update(self, device):
+        self.status = device.status
+        self.name   = device.light.name
+        self.color  = device.light.color
 

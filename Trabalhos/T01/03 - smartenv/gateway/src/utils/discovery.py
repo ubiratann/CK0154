@@ -19,7 +19,7 @@ def get_gateway_group_socket():
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
     return sock
 
-def get_objects_group_socket():
+def get_devices_group_socket():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -38,5 +38,5 @@ def get_udp_socket():
 def gateway_broadcast(sock, message):
     sock.sendto(message, (GATEWAY_GROUP_ADDRESS, MULTICAST_PORT))
 
-def objects_broadcast(sock, message):
+def devices_broadcast(sock, message):
     sock.sendto(message, (OBJECTS_GROUP_ADDRESS, MULTICAST_PORT))

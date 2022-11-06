@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-message ObjectsList {
-  repeated Object objects = 1;
+message DeviceList {
+  repeated Device objects = 1;
 }
 
-message Object{
+message Device{
   bool status = 1;
   string ip   = 2;
   int32 port  = 3;
   int32 id   = 4;
 
-  oneof object {
+  oneof device {
     Light light = 5;
     Tv tv = 6;
     TemperatureSensor temperaturesensor = 7;

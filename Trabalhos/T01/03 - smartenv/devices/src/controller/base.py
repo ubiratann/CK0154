@@ -8,15 +8,15 @@ from threading import Thread
 from src.utils import discovery
 from src.model.gateway import Gateway
 from src.proto.GatewayDiscovery_pb2 import Request, Response
-from src.proto.Objects_pb2 import Object
+from src.proto.Devices_pb2 import Device
 
 REFRESH_INTERVAL = 10
 BUFFER_SIZE = 5000
 logging.basicConfig(level=logging.INFO)
 
-class BaseObject:
+class BaseDevice:
     def __init__(self):
-        self.group_socket   = discovery.get_objects_group_socket()
+        self.group_socket   = discovery.get_devices_group_socket()
         self.udp_socket     = discovery.get_udp_socket()
         self.command_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -29,9 +29,12 @@ class BaseObject:
         req = Request()
         discovery.gateway_broadcast(self.udp_socket, req.SerializeToString())
 
+        logging.info(f"Connecting with gateway")
+        
         res = Response()
         res.ParseFromString(self.group_socket.recv(BUFFER_SIZE))
-        self.gateway = Gateway(res.ip, res.port, f"http://{res.ip}:{res.port}/api/v1/object")
+        self.gateway = Gateway(res.ip, res.port, f"http://{res.ip}:{res.port}/api/v1/device")
+        
         logging.info(f"Server addres: {res.ip}:{res.port}")
 
         self.register()
@@ -46,15 +49,15 @@ class BaseObject:
     def proto(self):
         ...
 
-    def update(self, object):
+    def update(self, device):
         ...
 
     def handle(self, client_socket):
-        object = Object()
-        object.ParseFromString(client_socket.recv(BUFFER_SIZE))
+        device = Device()
+        device.ParseFromString(client_socket.recv(BUFFER_SIZE))
         client_socket.close()
 
-        self.update(object)
+        self.update(device)
 
     def refresh(self):
         while True:
@@ -64,6 +67,11 @@ class BaseObject:
                             data=self.proto().SerializeToString())
 
     def register(self):
-        logging.info(f"{self.proto()}")
-        # req = requests.post(f"{self.gateway.api_url}/", 
-                            #    data=self.proto().SerializeToString())
+        res = requests.post(f"{self.gateway.api_url}/", 
+                               data=self.proto().SerializeToString())
+        
+        if(res.status_code > 201):
+            logging.error("Device not registered, trying again!")
+            self.register()
+        else:
+            logging.info(f"Device registered with id={self.id}")

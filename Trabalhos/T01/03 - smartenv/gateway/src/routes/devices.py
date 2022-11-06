@@ -1,16 +1,17 @@
 import json
 import socket
+import logging
 
 from http import HTTPStatus
 from flask import Blueprint, Response, request
 from flask_cors import CORS
 
-from src.proto.Objects_pb2 import ObjectsList, Object
+from proto.Devices_pb2 import DeviceList, Device
 
-blueprint = Blueprint("object", __name__)
+blueprint = Blueprint("device", __name__)
 
 CORS(blueprint)
-objects = []
+devices = []
 
 @blueprint.get("/")
 def get():
@@ -18,7 +19,7 @@ def get():
     response = None
 
     try:
-        response = ObjectsList(objects=objects)
+        response = DeviceList(devices=devices)
         response = { "data": response.SerializeToString() }
         status   = HTTPStatus.OK 
     except Exception as err:
@@ -34,17 +35,18 @@ def post():
     response = None
     
     try:
-        response = Object()
-        response.ParseFromString(json.dumps(request.json))
-        objects.append(response)
-        
+        response = Device()
+
+        response.ParseFromString(request.data)
+        devices.append(response)
+
         response = { "data": response.SerializeToString() }
         status   = HTTPStatus.CREATED 
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR
         response = err
 
-    return Response(response=json.dumps(response, default=str),
+    return Response(response=response,
                     status=status)
 
 
@@ -54,12 +56,12 @@ def getById(id):
     response = None
 
     try:
-        response =  next(filter(lambda obj: obj.id == id, objects))
+        response =  next(filter(lambda obj: obj.id == id, devices))
         response = { "data": response.SerializeToString() }
         status   = HTTPStatus.OK
     except StopIteration as err:
         status   = HTTPStatus.NOT_FOUND
-        response = {"message": "Object not found!"} 
+        response = {"message": "Device not found!"} 
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR 
         response = {"message": err}
@@ -73,13 +75,13 @@ def patch(id):
     response = None
 
     try:
-        response = Object()
+        response = Device()
         flag = False
 
-        for index in range(len(objects)):
-            if objects[index].id == id:
+        for index in range(len(devices)):
+            if devices[index].id == id:
                 response.ParseFromString(json.dumps(request.json))
-                objects[index] = response
+                devices[index] = response
                 flag = True
 
                 sock = socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -91,7 +93,7 @@ def patch(id):
         
         if(not flag):
             status = HTTPStatus.NOT_FOUND
-            raise Exception("Object not found!")
+            raise Exception("Device not found!")
         
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR if status == 0 else status
@@ -106,19 +108,19 @@ def refresh(id):
     response = None
 
     try:
-        response = Object()
+        response = Device()
         flag = False
 
-        for index in range(len(objects)):
-            if objects[index].id == id:
+        for index in range(len(devices)):
+            if devices[index].id == id:
                 response.ParseFromString(json.dumps(request.json))
-                objects[index] = response
+                devices[index] = response
                 flag = True
                 response = response.SerializeToString()
         
         if(not flag):
             status = HTTPStatus.NOT_FOUND
-            raise Exception("Object not found!")
+            raise Exception("Device not found!")
         
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR if status == 0 else status
