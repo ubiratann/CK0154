@@ -20,13 +20,14 @@ def get():
 
     try:
         response = DeviceList(devices=devices)
-        response = { "data": response.SerializeToString() }
+        response = response.SerializeToString()
+        
         status   = HTTPStatus.OK 
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR 
         response = err
 
-    return Response(response=json.dumps(response, default=str),
+    return Response(response=response,
                     status=status)
 
 @blueprint.post("/")
@@ -40,7 +41,7 @@ def post():
         response.ParseFromString(request.data)
         devices.append(response)
 
-        response = { "data": response.SerializeToString() }
+        response = response.SerializeToString()
         status   = HTTPStatus.CREATED 
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR
@@ -57,7 +58,7 @@ def getById(id):
 
     try:
         response =  next(filter(lambda obj: obj.id == id, devices))
-        response = { "data": response.SerializeToString() }
+        response = response.SerializeToString() 
         status   = HTTPStatus.OK
     except StopIteration as err:
         status   = HTTPStatus.NOT_FOUND
@@ -66,7 +67,7 @@ def getById(id):
         status   = HTTPStatus.INTERNAL_SERVER_ERROR 
         response = {"message": err}
 
-    return Response(response=json.dumps(response, default=str),
+    return Response(response=response,
                     status=status)
 
 # @blueprint.patch("/<int:id>")
@@ -117,8 +118,8 @@ def refresh(id):
                 devices[index] = response
                 flag = True
 
-            response = { "data": response.SerializeToString() }
-            status   = HTTPStatus.OK 
+                response = response.SerializeToString() 
+                status   = HTTPStatus.OK 
         
         if(not flag):
             status = HTTPStatus.NOT_FOUND
@@ -126,7 +127,7 @@ def refresh(id):
         
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR if status == 0 else status
-        response = response = {"message": err} 
+        response = {"message": err} 
 
     return Response(response=response,
                     status=status) 
