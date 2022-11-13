@@ -70,65 +70,42 @@ def getById(id):
     return Response(response=response,
                     status=status)
 
-# @blueprint.patch("/<int:id>")
-# def patch(id):
-#     status   = 0
-#     response = None
-
-#     try:
-#         flag = False
-
-#         for index in range(len(devices)):
-#             if devices[index].id == id:
-#                 response.ParseFromString(json.dumps(request.json))
-#                 devices[index] = response
-#                 flag = True
-
-#                 sock = socket(socket.AF_INET, socket.SOCK_STREAM)
-#                 sock.connect((response.ip, int(response.port)))
-
-#                 sock.send(response.SerializeToString())
-#                 response = { "data": response.SerializeToString() }
-#                 sock.close()
-        
-#         if(not flag):
-#             status = HTTPStatus.NOT_FOUND
-#             raise Exception("Device not found!")
-        
-#     except Exception as err:
-#         status   = HTTPStatus.INTERNAL_SERVER_ERROR if status == 0 else status
-#         response = response = {"message": err} 
-
-#     return Response(response=json.dumps(response, default=str),
-#                     status=status)
-
 @blueprint.patch("/<int:id>")
-def refresh(id):
+def patch(id):
     status   = 0
     response = None
 
     try:
-        response = Device() 
         flag = False
-
         for index in range(len(devices)):
-            logging.info(devices[index])
-            if devices[index].id == id:
-                response.ParseFromString(request.data)
-                devices[index] = response
+            if (devices[index].id == id):
+
+                device = Device()
+                device.ParseFromString(request.data)
+                
+                devices[index] = device
                 flag = True
 
-                response = response.SerializeToString() 
-                status   = HTTPStatus.OK 
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((device.ip, int(device.port)))
+
+                sock.send(device.SerializeToString())
+                sock.close()
         
         if(not flag):
             status = HTTPStatus.NOT_FOUND
             raise Exception("Device not found!")
+        
+        response = DeviceList(devices=devices)
+        response = response.SerializeToString()
+        
+        status   = HTTPStatus.OK 
         
     except Exception as err:
         status   = HTTPStatus.INTERNAL_SERVER_ERROR if status == 0 else status
         response = {"message": err} 
 
     return Response(response=response,
-                    status=status) 
+                    status=status)
+
 
