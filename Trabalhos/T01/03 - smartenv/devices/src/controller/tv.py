@@ -1,5 +1,5 @@
-from controller.base import BaseDevice
-from proto.Devices_pb2 import Tv as TVProto, Device, ACTUATOR
+from src.controller.base import BaseDevice
+from src.proto.Devices_pb2 import Tv as TVProto, Device, ACTUATOR
 
 class Tv(BaseDevice):
 
@@ -22,5 +22,3 @@ class Tv(BaseDevice):
         self.status = device.status
         self.channel = device.tv.channel
         self.volume = device.tv.volume
-
-Tv("10.1", 20)

@@ -1,5 +1,5 @@
-from proto.Devices_pb2 import Freezer as FreezerProto, FreezerPower, Device
-from controller.base import BaseDevice, SENSOR
+from src.proto.Devices_pb2 import Freezer as FreezerProto, FreezerPower, Device
+from src.controller.base import BaseDevice, SENSOR
 
 class Freezer(BaseDevice):
 

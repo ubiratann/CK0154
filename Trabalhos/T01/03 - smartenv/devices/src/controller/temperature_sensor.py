@@ -2,8 +2,8 @@ from threading import Thread
 from random import randint
 from time import sleep
 
-from controller.base import BaseDevice
-from proto.Devices_pb2 import Tv as TVProto, Device, SENSOR
+from src.controller.base import BaseDevice
+from src.proto.Devices_pb2 import Tv as TVProto, Device, SENSOR
 
 class TemperatureSensor(BaseDevice):
 
@@ -32,5 +32,3 @@ class TemperatureSensor(BaseDevice):
         while True:
             sleep(10)
             self.temperature = randint(self.temperature - 1, randint(self.temperature, self.temperature + 1))
-
-TemperatureSensor(44)
