@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+    rabbitmq:
+      image: rabbitmq:3-management-alpine
+      container_name: "rabbitmq"
+      environment:
+        RABBITMQ_DEFAULT_USER: root
+        RABBITMQ_DEFAULT_PASS: root
+      ports:
+          - "5672:5672"
+          - "15672:15672"
+      volumes:
+        - rabbitmq_data:/var/lib/rabbitmq/
+        - rabbitmq_logs:/var/log/rabbitmq
+      healthcheck:
+        test: rabbitmq-diagnostics -q ping
+        interval: 10s
+        timeout: 10s
+        retries: 3
+volumes:
+  rabbitmq_data:
+    driver: local
+  rabbitmq_logs:
+    driver: local

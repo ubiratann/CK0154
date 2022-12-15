@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+service DeviceUpdate{
+  rpc UpdateDevice (Device) returns (DeviceUpdateStatus) {} 
+}
+
+message DeviceUpdateStatus {
+  bool success = 1;
+}
+
+message DeviceList {
+  repeated Device devices = 1;
+}
+
+message Device{
+  bool status     = 1;
+  string ip       = 2;
+  int32 port      = 3;
+  int32 id        = 4;
+  string type     = 5;
+
+  oneof device {
+    Light light = 6;
+    PresenceSensor presencesensor = 7;
+    AirConditioner airconditioner = 8;
+    Heater heater = 9;
+    TemperatureSensor temperaturesensor = 10;
+    FireSupressor firesupressor = 11;
+    SmokeSensor smokesensor = 12;
+  }
+}
+
+message Light {
+  string location  = 1;
+  string color = 2;
+}
+
+message PresenceSensor {
+  string location = 1;
+}
+
+message AirConditioner {
+  float temperature = 1;
+}
+
+message Heater {
+  float temperature = 1;   
+}
+
+message TemperatureSensor {
+  float temperature = 1;
+}
+
+message FireSupressor {
+  string location  = 1;
+}
+
+message SmokeSensor {
+  string location = 1;
+}
